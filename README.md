@@ -55,7 +55,7 @@ public Blog Find(int id)
 }
 ```
 
-# Query-Object and Method Responsibility Segregation established
+# Query-Object and Method Responsibility Segregation
 In LtQuery, Query-Object may differ from the general concept.  
 Query-Object represents the "Region" of target data.  
 That is, The count function in SQL is not included in Query-Object.
