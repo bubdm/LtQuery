@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 
-namespace LtQuery.ORM.SQL
+namespace LtQuery.ORM.SQL.Commands
 {
     static class SqlDbTypeExtensions
     {

@@ -7,9 +7,16 @@ namespace LtQuery.ORM.SQL
 
     public interface IRepository<TEntity> : IDisposable
     {
-        int Count(Count<TEntity> query, object values = null);
-        IEnumerable<TEntity> Query(Select<TEntity> query, object values = null);
-        TEntity QuerySingle(Select<TEntity> query, object values = null);
-        TEntity QueryFirst(Select<TEntity> query, object values = null);
+        int Load(Count<TEntity> query);
+        int Load<TParameter>(Count<TEntity> query, TParameter values);
+
+        IEnumerable<TEntity> Load(SelectMany<TEntity> query);
+        IEnumerable<TEntity> Load<TParameter>(SelectMany<TEntity> query, TParameter values);
+
+        TEntity Load(SelectSingle<TEntity> query);
+        TEntity Load<TParameter>(SelectSingle<TEntity> query, TParameter values);
+
+        TEntity Load(SelectFirst<TEntity> query);
+        TEntity Load<TParameter>(SelectFirst<TEntity> query, TParameter values);
     }
 }

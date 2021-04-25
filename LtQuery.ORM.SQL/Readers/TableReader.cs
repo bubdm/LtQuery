@@ -35,6 +35,7 @@ namespace LtQuery.ORM.SQL.Readers
         }
 
         public int ColumnCount => _columns.Length;
+
         public TEntity Read(IDataReader reader, int startIndex = 0)
         {
             var entity = _createEntityFunc();

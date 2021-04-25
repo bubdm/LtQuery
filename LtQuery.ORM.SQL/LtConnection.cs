@@ -48,13 +48,24 @@ namespace LtQuery.ORM.SQL
             => new Repository<TEntity>(this, _sqlBuilder, new TableReader<TEntity>(_tableResolver.Resolve<TEntity>()));
 
 
-        public int Count<TEntity>(Query<TEntity> query, object values = null)
-            => getRepository<TEntity>().Count(new Count<TEntity>(query), values);
-        public IEnumerable<TEntity> Query<TEntity>(Query<TEntity> query, object values = null)
-            => getRepository<TEntity>().Query(new Select<TEntity>(query), values);
-        public TEntity QuerySingle<TEntity>(Query<TEntity> query, object values = null)
-            => getRepository<TEntity>().QuerySingle(new Select<TEntity>(query), values);
-        public TEntity QueryFirst<TEntity>(Query<TEntity> query, object values = null)
-            => getRepository<TEntity>().QueryFirst(new Select<TEntity>(query), values);
+        public int Count<TEntity>(Query<TEntity> query)
+            => getRepository<TEntity>().Load(new Count<TEntity>(query));
+        public int Count<TEntity, TParameter>(Query<TEntity> query, TParameter values)
+            => getRepository<TEntity>().Load(new Count<TEntity>(query), values);
+
+        public IEnumerable<TEntity> Select<TEntity>(Query<TEntity> query)
+            => getRepository<TEntity>().Load(new SelectMany<TEntity>(query));
+        public IEnumerable<TEntity> Select<TEntity, TParameter>(Query<TEntity> query, TParameter values)
+            => getRepository<TEntity>().Load(new SelectMany<TEntity>(query), values);
+
+        public TEntity Single<TEntity>(Query<TEntity> query)
+            => getRepository<TEntity>().Load(new SelectSingle<TEntity>(query));
+        public TEntity Single<TEntity, TParameter>(Query<TEntity> query, TParameter values)
+            => getRepository<TEntity>().Load(new SelectSingle<TEntity>(query), values);
+
+        public TEntity First<TEntity>(Query<TEntity> query)
+            => getRepository<TEntity>().Load(new SelectFirst<TEntity>(query));
+        public TEntity First<TEntity, TParameter>(Query<TEntity> query, TParameter values)
+            => getRepository<TEntity>().Load(new SelectFirst<TEntity>(query), values);
     }
 }
