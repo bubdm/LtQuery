@@ -4,18 +4,29 @@ using System.Linq.Expressions;
 
 namespace LtQuery.ORM.SQL.Commands
 {
-    class AnonymousParameter<TDynamic, TProperty> : IAnonymousParameter
+    class AnonymousParameter<TDynamic, TProperty> : ICommandParameter<TDynamic>
     {
         public string Name { get; }
 
         public DbType DbType { get; }
+        private readonly IDbDataParameter _inner;
 
         private readonly Func<TDynamic, TProperty> _getterFunc;
-        public AnonymousParameter(string name)
+        public AnonymousParameter(IDbCommand dbCommand, string name)
         {
             Name = name;
             DbType = typeof(TProperty).GetDbType();
+
             _getterFunc = createGetter();
+            _inner = createAndRegistDbDataParameter(dbCommand);
+        }
+        private IDbDataParameter createAndRegistDbDataParameter(IDbCommand dbCommand)
+        {
+            var commandParameter = dbCommand.CreateParameter();
+            commandParameter.ParameterName = $"@{Name}";
+            commandParameter.DbType = typeof(TProperty).GetDbType();
+            dbCommand.Parameters.Add(commandParameter);
+            return commandParameter;
         }
         private Func<TDynamic, TProperty> createGetter()
         {
@@ -24,6 +35,6 @@ namespace LtQuery.ORM.SQL.Commands
             return exp.Compile();
         }
 
-        public object GetValue(object values) => _getterFunc((TDynamic)values);
+        public void SetParameter(TDynamic values) => _inner.Value = _getterFunc(values);
     }
 }

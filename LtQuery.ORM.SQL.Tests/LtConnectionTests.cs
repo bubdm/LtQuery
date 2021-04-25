@@ -37,7 +37,7 @@ namespace LtQuery.ORM.SQL.Tests
 
             var tableResolver = _container.Resolve<ITableDefinitionResolver>();
             var dbConnection = new SqlConnectionFactory().Create();
-            var sqlBuilder = new SqlServerSqlBuilder(tableResolver);
+            var sqlBuilder = new SQLiteSqlBuilder(tableResolver);
             _connection = new LtConnection(tableResolver, sqlBuilder, dbConnection);
 
             _allQuery = new Query<NonRelationEntity>();
@@ -56,23 +56,58 @@ namespace LtQuery.ORM.SQL.Tests
         }
 
         [Fact]
-        public void Query()
+        public void Select()
         {
-            var actual = _connection.Query(_allQuery);
+            var actual = _connection.Select(_allQuery);
             Assert.Equal(_entities, actual);
         }
 
         [Fact]
-        public void QuerySingle()
+        public void SelectWithTakeCount()
         {
-            var actual = _connection.QuerySingle(_singleQuery, new { Id = 1 });
-            Assert.Equal(_entities.First(), actual);
+            var count = 10;
+            var expected = _entities.Take(count);
+            var query = new Query<NonRelationEntity>(takeCount: count);
+            var actual = _connection.Select(query);
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
-        public void QueryFirst()
+        public void SelectWithSkipCount()
         {
-            var actual = _connection.QueryFirst(_singleQuery, new { Id = 1 });
+            var skipCount = 10;
+            var expected = _entities.Skip(skipCount);
+            var query = new Query<NonRelationEntity>(skipCount: skipCount);
+            try
+            {
+                var actual = _connection.Select(query);
+                throw new Exception("SQLite must use TakeCount when With SkipCount");
+            }
+            catch { }
+        }
+
+        [Fact]
+        public void SelectWithTakeCountAndSkipCount()
+        {
+            var takeCount = 10;
+            var skipCount = 20;
+            var expected = _entities.Skip(skipCount).Take(takeCount);
+            var query = new Query<NonRelationEntity>(skipCount: skipCount, takeCount: takeCount);
+            var actual = _connection.Select(query);
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void Single()
+        {
+            var actual = _connection.Single(_singleQuery, new { Id = 1 });
+            Assert.Equal(_entities.Single(_ => _.Id == 1), actual);
+        }
+
+        [Fact]
+        public void First()
+        {
+            var actual = _connection.First(_singleQuery, new { Id = 1 });
             Assert.Equal(_entities.First(), actual);
         }
     }

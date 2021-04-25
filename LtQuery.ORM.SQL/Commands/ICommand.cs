@@ -3,7 +3,7 @@ using System.Data;
 
 namespace LtQuery.ORM.SQL.Commands
 {
-    interface IAnonymousParameterCommand<TEntity> : IDisposable
+    interface ICommand : IDisposable
     {
         void SetParameters(object values);
         IDataReader ExecuteReader();

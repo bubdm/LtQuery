@@ -36,8 +36,8 @@ namespace OrmPerformanceTests.LtQuery
             _query = new Query<TestEntity>();
             _singleQuery = new Query<TestEntity>(where: new EqualOperator(new Property<TestEntity>(nameof(TestEntity.Id)), new Parameter("Id")));
 
-            _connection.Query(_query);
-            _connection.QuerySingle(_singleQuery, new { Id = 1 });
+            _connection.Select(_query);
+            _connection.Single(_singleQuery, new { Id = 1 });
 
         }
         public void Cleanup()
@@ -52,7 +52,7 @@ namespace OrmPerformanceTests.LtQuery
             var accum = 0;
             //for (var i = 0; i <= 100; i++)
             {
-                var entity = _connection.QuerySingle(_singleQuery, new { Id = 1 });
+                var entity = _connection.Single(_singleQuery, new { Id = 1 });
 
                 AddHashCode(ref accum, entity.Id);
             }
@@ -68,7 +68,7 @@ namespace OrmPerformanceTests.LtQuery
         public int SelectAll()
         {
             var accum = 0;
-            var entities = _connection.Query(_query);
+            var entities = _connection.Select(_query);
             foreach (var entity in entities)
             {
                 AddHashCode(ref accum, entity.Id);

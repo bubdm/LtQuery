@@ -6,13 +6,13 @@ namespace LtQuery.ORM.SQL.SqlBuilders
     using Definitions;
     using SqlQueries;
 
-    public class SqlServerSqlBuilder : ISqlBuilder
+    public class SQLiteSqlBuilder : ISqlBuilder
     {
         private readonly ITableDefinitionResolver _tableResolver;
 
         private const string tableAlias = "t1";
         private const string nullString = "null";
-        public SqlServerSqlBuilder(ITableDefinitionResolver tableResolver)
+        public SQLiteSqlBuilder(ITableDefinitionResolver tableResolver)
         {
             _tableResolver = tableResolver ?? throw new ArgumentNullException(nameof(tableResolver));
         }
@@ -40,6 +40,9 @@ namespace LtQuery.ORM.SQL.SqlBuilders
             var keyColumn = table.PrimaryKeyColumn;
             var query = countQuery.Query;
 
+            if (query.TakeCount == null && query.SkipCount != null)
+                throw new InvalidOperationException("SQLite is not Support (TakeCount == null && SkipCount != null)");
+
             var strb = new StringBuilder();
             strb.Append("SELECT COUNT(").AppendSql(keyColumn).Append(") ");
 
@@ -48,10 +51,12 @@ namespace LtQuery.ORM.SQL.SqlBuilders
             if (query.Where != null)
                 strb.Append(" WHERE ").AppendSql(query.Where);
 
-            if (query.SkipCount != null || query.TakeCount != null)
-                strb.Append(" OFFSET ").Append(query.SkipCount ?? 0).Append(" ROWS");
             if (query.TakeCount != null)
-                strb.Append(" FETCH NEXT ").Append(query.TakeCount.Value).Append(" ROWS ONLY");
+            {
+                strb.Append(" LIMIT ").Append(query.TakeCount.Value);
+                if (query.SkipCount != null)
+                    strb.Append(" OFFSET ").Append(query.SkipCount.Value);
+            }
 
             return strb.ToString();
         }
@@ -61,6 +66,8 @@ namespace LtQuery.ORM.SQL.SqlBuilders
             var table = _tableResolver.Resolve<TEntity>();
             var query = selectQuery.Query;
 
+            if (query.TakeCount == null && query.SkipCount != null)
+                throw new InvalidOperationException("SQLite is not Support (TakeCount == null && SkipCount != null)");
 
             var strb = new StringBuilder();
             strb.Append("SELECT ");
@@ -71,10 +78,12 @@ namespace LtQuery.ORM.SQL.SqlBuilders
             if (query.Where != null)
                 strb.Append(" WHERE ").AppendSql(query.Where);
 
-            if (query.SkipCount != null || query.TakeCount != null)
-                strb.Append(" OFFSET ").Append(query.SkipCount ?? 0).Append(" ROWS");
             if (query.TakeCount != null)
-                strb.Append(" FETCH NEXT ").Append(query.TakeCount.Value).Append(" ROWS ONLY");
+            {
+                strb.Append(" LIMIT ").Append(query.TakeCount.Value);
+                if (query.SkipCount != null)
+                    strb.Append(" OFFSET ").Append(query.SkipCount.Value);
+            }
 
             return strb.ToString();
         }
@@ -88,32 +97,20 @@ namespace LtQuery.ORM.SQL.SqlBuilders
             var table = _tableResolver.Resolve<TEntity>();
             var strb = new StringBuilder();
 
-            if (query.SkipCount == null)
-            {
-                strb.Append("SELECT TOP(").Append(takeMax).Append(") ");
-                append(strb, table.Columns);
+            var take = query.TakeCount;
+            if (take > takeMax)
+                take = takeMax;
+            strb.Append("SELECT ");
+            append(strb, table.Columns);
 
-                strb.Append(" FROM ").AppendSql(table);
+            strb.Append(" FROM ").AppendSql(table);
 
-                if (query.Where != null)
-                    strb.Append(" WHERE ").AppendSql(query.Where);
-            }
-            else
-            {
-                var take = query.TakeCount;
-                if (take > takeMax)
-                    take = takeMax;
-                strb.Append("SELECT ");
-                append(strb, table.Columns);
+            if (query.Where != null)
+                strb.Append(" WHERE ").AppendSql(query.Where);
 
-                strb.Append(" FROM ").AppendSql(table);
-
-                if (query.Where != null)
-                    strb.Append(" WHERE ").AppendSql(query.Where);
-
-                strb.Append(" OFFSET ").Append(query.SkipCount ?? 0).Append(" ROWS");
-                strb.Append(" FETCH NEXT ").Append(take ?? 2).Append(" ROWS ONLY");
-            }
+            strb.Append(" LIMIT ").Append(take ?? takeMax);
+            if (query.SkipCount != null)
+                strb.Append(" OFFSET ").Append(query.SkipCount.Value);
 
             return strb.ToString();
         }

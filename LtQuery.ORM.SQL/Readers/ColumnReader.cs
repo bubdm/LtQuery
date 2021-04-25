@@ -14,6 +14,7 @@ namespace LtQuery.ORM.SQL.Readers
             _definition = definition ?? throw new ArgumentNullException(nameof(definition));
             _setter = createSetter();
         }
+
         public string Name => _definition.Name;
 
         private Action<TEntity, TProperty> createSetter()

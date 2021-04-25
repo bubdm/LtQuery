@@ -16,6 +16,7 @@ namespace LtQuery.ORM.DryIoc
         public void Register<TEntity>(Func<TableDefinition<TEntity>> factory)
             => _container.RegisterDelegate(factory, reuse: Reuse.Singleton);
 
-        public TableDefinition<TEntity> Resolve<TEntity>() => _container.Resolve<TableDefinition<TEntity>>();
+        public TableDefinition<TEntity> Resolve<TEntity>()
+            => _container.Resolve<TableDefinition<TEntity>>();
     }
 }

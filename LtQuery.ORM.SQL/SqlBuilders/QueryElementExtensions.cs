@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
-namespace LtQuery.ORM.SQL.SqlBuilders.SqlServer
+namespace LtQuery.ORM.SQL.SqlBuilders
 {
     using Definitions;
     using QueryElements;
@@ -14,10 +15,10 @@ namespace LtQuery.ORM.SQL.SqlBuilders.SqlServer
         private const string nullString = "null";
 
         public static StringBuilder AppendSql<TEntity>(this StringBuilder _this, TableDefinition<TEntity> table)
-            => _this.Append('[').Append(table.Name).Append("] AS ").Append(tableAlias);
+            => _this.Append('[').Append(table.Name).Append("] AS [").Append(tableAlias).Append(']');
 
         public static StringBuilder AppendSql<TEntity>(this StringBuilder _this, ColumnDefinition<TEntity> column)
-            => _this.Append(tableAlias).Append(".[").Append(column.Name).Append("]");
+            => _this.Append('[').Append(tableAlias).Append("].[").Append(column.Name).Append("]");
 
         public static StringBuilder AppendSql<TEntity>(this StringBuilder _this, OrderBy<TEntity> orderBy)
         {
@@ -44,7 +45,7 @@ namespace LtQuery.ORM.SQL.SqlBuilders.SqlServer
             switch (value)
             {
                 case IProperty value2:
-                    return _this.Append(tableAlias).Append(".[").Append(value2.Name).Append("]");
+                    return _this.Append('[').Append(tableAlias).Append("].[").Append(value2.Name).Append("]");
                 case IConstantValue value2:
                     return _this.Append(value2.Value ?? nullString);
                 case Parameter value2:
@@ -62,7 +63,7 @@ namespace LtQuery.ORM.SQL.SqlBuilders.SqlServer
                     }
                     return _this;
                 default:
-                    throw new LtQueryException($"[{value.GetType()}]Type can't convert Sql");
+                    throw new InvalidOperationException($"[{value.GetType()}]Type can't convert Sql");
             }
         }
     }

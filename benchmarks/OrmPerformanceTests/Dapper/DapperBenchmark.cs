@@ -7,15 +7,15 @@ namespace OrmPerformanceTests.Dapper
     {
         private IDbConnection _connection;
 
-        private const string singleSql = "SELECT [Id], [Code], [Code2], [Name], [Date] FROM TestEntity WHERE Id = @Id";
-        private const string allSql = "SELECT [Id], [Code], [Code2], [Name], [Date] FROM TestEntity";
+        private const string _allSql = "SELECT [Id], [Code], [Code2], [Name], [Date] FROM TestEntity";
+        private const string _singleSql = "SELECT TOP (2) [Id], [Code], [Code2], [Name], [Date] FROM TestEntity WHERE Id = @Id";
 
         public void Setup()
         {
             _connection = new SqlConnectionFactory().Create();
 
-            _connection.QuerySingle<TestEntity>(singleSql, new { Id = 1 });
-            _connection.Query<TestEntity>(allSql);
+            _connection.Query<TestEntity>(_allSql);
+            _connection.QuerySingle<TestEntity>(_singleSql, new { Id = 1 });
         }
         public void Cleanup()
         {
@@ -27,7 +27,7 @@ namespace OrmPerformanceTests.Dapper
             var accum = 0;
             //for (var i = 0; i <= 100; i++)
             {
-                var entity = _connection.QuerySingle<TestEntity>(singleSql, new { Id = 1 });
+                var entity = _connection.QuerySingle<TestEntity>(_singleSql, new { Id = 1 });
 
                 AddHashCode(ref accum, entity.Id);
             }
@@ -43,7 +43,7 @@ namespace OrmPerformanceTests.Dapper
         public int SelectAll()
         {
             var accum = 0;
-            var entities = _connection.Query<TestEntity>(allSql);
+            var entities = _connection.Query<TestEntity>(_allSql);
             foreach (var entity in entities)
             {
                 AddHashCode(ref accum, entity.Id);

@@ -46,7 +46,7 @@ namespace OrmPerformanceTests.Benchmarks
                 using (var connection = new LtConnection(tableResolver, sqlBuilder, dbConnection))
                 {
                     var singleQuery = new Query<TestEntity>(where: new EqualOperator(new Property<TestEntity>(nameof(TestEntity.Id)), new Parameter("Id")));
-                    var entity = connection.QuerySingle(singleQuery, new { Id = 1 });
+                    var entity = connection.Single(singleQuery, new { Id = 1 });
                     AddHashCode(ref accum, entity.Id);
                 }
                 return accum;
