@@ -63,6 +63,41 @@ namespace LtQuery.ORM.SQL.Tests
         }
 
         [Fact]
+        public void SelectWithTakeCount()
+        {
+            var count = 10;
+            var expected = _entities.Take(count);
+            var query = new Query<NonRelationEntity>(takeCount: count);
+            var actual = _connection.Select(query);
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void SelectWithSkipCount()
+        {
+            var skipCount = 10;
+            var expected = _entities.Skip(skipCount);
+            var query = new Query<NonRelationEntity>(skipCount: skipCount);
+            try
+            {
+                var actual = _connection.Select(query);
+                throw new Exception("SQLite must use TakeCount when With SkipCount");
+            }
+            catch { }
+        }
+
+        [Fact]
+        public void SelectWithTakeCountAndSkipCount()
+        {
+            var takeCount = 10;
+            var skipCount = 20;
+            var expected = _entities.Skip(skipCount).Take(takeCount);
+            var query = new Query<NonRelationEntity>(skipCount: skipCount, takeCount: takeCount);
+            var actual = _connection.Select(query);
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
         public void Single()
         {
             var actual = _connection.Single(_singleQuery, new { Id = 1 });
