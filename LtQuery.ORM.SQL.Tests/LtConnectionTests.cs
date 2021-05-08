@@ -8,8 +8,6 @@ using Xunit;
 namespace LtQuery.ORM.SQL.Tests
 {
     using QueryElements;
-    using QueryElements.Values;
-    using QueryElements.Values.Operators;
     using SqlBuilders;
 
     public class LtConnectionTests : IDisposable

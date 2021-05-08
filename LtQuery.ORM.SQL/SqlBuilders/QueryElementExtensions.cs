@@ -6,8 +6,6 @@ namespace LtQuery.ORM.SQL.SqlBuilders
 {
     using Definitions;
     using QueryElements;
-    using QueryElements.Values;
-    using QueryElements.Values.Operators;
 
     public static class QueryElementExtensions
     {

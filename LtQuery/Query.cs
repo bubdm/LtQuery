@@ -1,7 +1,6 @@
 ﻿namespace LtQuery
 {
     using QueryElements;
-    using QueryElements.Values;
 
     public sealed class Query<TEntity> : Immutable<Query<TEntity>>
     {

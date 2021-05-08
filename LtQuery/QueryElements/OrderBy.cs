@@ -7,10 +7,10 @@ namespace LtQuery.QueryElements
         public Property<TEntity> Column { get; }
         public OrderDirect Direct { get; }
         public OrderBy<TEntity> Then { get; }
-        public OrderBy(Property<TEntity> column, OrderDirect? direct = null, OrderBy<TEntity> then = null)
+        public OrderBy(Property<TEntity> column, OrderDirect direct = OrderDirect.Asc, OrderBy<TEntity> then = null)
         {
             Column = column ?? throw new ArgumentNullException(nameof(column));
-            Direct = direct ?? OrderDirect.Asc;
+            Direct = direct;
             Then = then;
         }
 

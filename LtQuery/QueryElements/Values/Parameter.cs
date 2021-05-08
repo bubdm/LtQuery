@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LtQuery.QueryElements.Values
+namespace LtQuery.QueryElements
 {
     public sealed class Parameter : Immutable<Parameter>, IValue
     {

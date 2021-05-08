@@ -4,9 +4,6 @@ using DryIoc;
 using LtQuery;
 using LtQuery.ORM.SQL;
 using LtQuery.ORM.SQL.SqlBuilders;
-using LtQuery.QueryElements;
-using LtQuery.QueryElements.Values;
-using LtQuery.QueryElements.Values.Operators;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
@@ -45,7 +42,7 @@ namespace OrmPerformanceTests.Benchmarks
                 using (var dbConnection = new SqlConnectionFactory().Create())
                 using (var connection = new LtConnection(tableResolver, sqlBuilder, dbConnection))
                 {
-                    var singleQuery = new Query<TestEntity>(where: new EqualOperator(new Property<TestEntity>(nameof(TestEntity.Id)), new Parameter("Id")));
+                    var singleQuery = Lt.Query<TestEntity>().Where(_ => _.Id == Lt.Arg<int>()).ToImmutable();
                     var entity = connection.Single(singleQuery, new { Id = 1 });
                     AddHashCode(ref accum, entity.Id);
                 }

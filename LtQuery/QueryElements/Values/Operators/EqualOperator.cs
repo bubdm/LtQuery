@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace LtQuery.QueryElements.Values.Operators
+namespace LtQuery.QueryElements
 {
     public sealed class EqualOperator : Immutable<EqualOperator>, IBoolValue
     {

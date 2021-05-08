@@ -1,12 +1,14 @@
-﻿namespace LtQuery.QueryElements.Values
+﻿namespace LtQuery.QueryElements
 {
-    public sealed class ConstantValue<TProperty> : Immutable<ConstantValue<TProperty>>, IValue
+    public sealed class ConstantValue<TProperty> : Immutable<ConstantValue<TProperty>>, IConstantValue
     {
         public TProperty Value { get; }
         public ConstantValue(TProperty value)
         {
             Value = value;
         }
+
+        object IConstantValue.Value => Value;
 
         protected override int CreateHashCode() => Value.GetHashCode();
 
