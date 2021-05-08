@@ -2,9 +2,6 @@
 using LtQuery;
 using LtQuery.ORM.SQL;
 using LtQuery.ORM.SQL.SqlBuilders;
-using LtQuery.QueryElements;
-using LtQuery.QueryElements.Values;
-using LtQuery.QueryElements.Values.Operators;
 using System.Data;
 
 namespace OrmPerformanceTests.LtQuery
@@ -33,12 +30,11 @@ namespace OrmPerformanceTests.LtQuery
             var sqlBuilder = new SqlServerSqlBuilder(resolver);
             _connection = new LtConnection(resolver, sqlBuilder, _dbConnection);
 
-            _query = new Query<TestEntity>();
-            _singleQuery = new Query<TestEntity>(where: new EqualOperator(new Property<TestEntity>(nameof(TestEntity.Id)), new Parameter("Id")));
+            _query = Lt.Query<TestEntity>().ToImmutable();
+            _singleQuery = Lt.Query<TestEntity>().Where(_ => _.Id == Lt.Arg<int>()).ToImmutable();
 
             _connection.Select(_query);
             _connection.Single(_singleQuery, new { Id = 1 });
-
         }
         public void Cleanup()
         {
