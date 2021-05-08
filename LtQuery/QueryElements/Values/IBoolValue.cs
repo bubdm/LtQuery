@@ -1,4 +1,4 @@
-﻿namespace LtQuery.QueryElements.Values
+﻿namespace LtQuery.QueryElements
 {
     public interface IBoolValue : IValue
     {

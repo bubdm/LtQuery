@@ -13,11 +13,7 @@ namespace LtQuery
         private readonly IReadOnlyList<T> _inner;
         public ImmutableList(params T[] values)
         {
-            _inner = values;
-        }
-        public ImmutableList(IReadOnlyList<T> values)
-        {
-            _inner = values;
+            _inner = (IReadOnlyList<T>)values.Clone();
         }
         public ImmutableList(IEnumerable<T> values)
         {
