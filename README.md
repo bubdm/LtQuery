@@ -7,17 +7,17 @@ LtQuery does not accept the input of SQL which is a string.
 Instead, call giving a diverty, tiny query object.
 
 ```
-var blogQuery = new Query<Blog>().Where(_ => _.Id);
-var blog = connection.QuerySingle(blogQuery, new{ blogId });
+var blogQuery = Lt.Query<Blog>().Where(_ => _.Id == Lt.Arg<int>());
+var blog = connection.QuerySingle(blogQuery, new { Id = blogId });
 
 var postsQuery = blogQuery.To<Post>(_ => _.BlogId);
-var posts = connection.Query(postsQuery, new{ blogId });
+var posts = connection.Query(postsQuery, new{ Id = blogId });
 ```
 
 # Benchmark
 
 'benchmarks/OrmPerformanceTests' result.  
-May be, There a mistake in the settings???
+May be, wrong the settings.
 I don't think it's so fast.
 
 ## Measurement environment
@@ -50,8 +50,8 @@ private Query<Blog> _query;
 public Blog Find(int id)
 {
   if(_query == null)
-    _query = new Query<Blog>().Where(_ => _.Id);
-  return _connection.QuerySingle(_query, new{ id });
+    _query = Lt.Query<Blog>().Where(_ => _.Id == Lt.Arg<int>()).ToImmutable();
+  return _connection.QuerySingle(_query, new{ Id = id });
 }
 ```
 
@@ -62,5 +62,5 @@ That is, The count function in SQL is not included in Query-Object.
 
 ![LtQuery](https://user-images.githubusercontent.com/3863674/115135321-b4710400-a052-11eb-8781-7e7783b01163.png)
 
-# Future
+# Policy
 Aiming for the best ORM for DDD which compromises that eliminates infrastructure dependence but relies on Lazy-Loading.
